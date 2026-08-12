@@ -1,4 +1,4 @@
-# Afya Quarter — Frontend (React + Vite + Tailwind + TS)
+# Epic Quarter — Frontend (React + Vite + Tailwind + TS)
 
 As duas telas (**Quarter Tracking** e **Quarter Roadmap**) consumindo a API.
 

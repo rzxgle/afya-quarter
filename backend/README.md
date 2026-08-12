@@ -1,4 +1,4 @@
-# Afya Quarter — Backend (FastAPI)
+# Epic Quarter — Backend (FastAPI)
 
 API que serve as telas **Quarter Tracking** e **Quarter Roadmap**.
 Reusa a lógica de negócio do projeto Streamlit **sem alterar nenhum cálculo**.

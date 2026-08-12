@@ -1,4 +1,4 @@
-# Afya Quarter — Reescrita (Opção B)
+# Epic Quarter — Reescrita (Opção B)
 
 Evolução visual das telas **Quarter Tracking** e **Quarter Roadmap**, saindo do
 Streamlit para **FastAPI (backend) + React/Vite/Tailwind (front)**, **sem alterar
