@@ -1,0 +1,38 @@
+/* Afya Quarter — Design Tokens (Fase 3)
+   Fonte única de verdade da identidade visual. Consumido pelo front. */
+:root{
+  /* Marca */
+  --afya-brand:#CE0058;
+  --afya-brand-deep:#A80048;
+  --afya-brand-tint:#FCEBF2;
+  --afya-blue:#0057B8;
+
+  /* Neutros */
+  --afya-ink:#333333;
+  --afya-ink-2:#5B5B60;
+  --afya-ink-3:#8A8A90;
+  --afya-line:#E6E4E6;
+  --afya-line-soft:#EEEEEE;
+  --afya-surface:#FFFFFF;
+  --afya-bg:#F6F5F6;
+
+  /* Tracking (status de item) — paleta discreta */
+  --st-done:#5B9E7D;
+  --st-approval:#9488AE;
+  --st-progress:#6E80A6;
+  --st-todo:#C7C7CD;
+  --st-cancel:#E1E1E5;
+
+  /* Roadmap (status simplificado: 3 estados) */
+  --rm-concluido:#5B9E7D;
+  --rm-andamento:#6E80A6;
+  --rm-pendente:#C4C6CD;
+  --rm-risco:#C05F5F;   /* usado só como contorno de "em risco" */
+
+  /* Tipografia */
+  --afya-font:"Afya Sans Pro","Afya Sans",Arial,Helvetica,sans-serif;
+
+  /* Forma */
+  --afya-radius:12px;
+  --afya-shadow:0 1px 2px rgba(17,17,20,.05), 0 8px 24px -16px rgba(17,17,20,.18);
+}

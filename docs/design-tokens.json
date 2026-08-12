@@ -1,0 +1,17 @@
+{
+  "brand": { "primary": "#CE0058", "deep": "#A80048", "tint": "#FCEBF2", "blue": "#0057B8" },
+  "neutral": {
+    "ink": "#333333", "ink2": "#5B5B60", "ink3": "#8A8A90",
+    "line": "#E6E4E6", "lineSoft": "#EEEEEE", "surface": "#FFFFFF", "bg": "#F6F5F6"
+  },
+  "tracking": {
+    "done": "#5B9E7D", "approval": "#9488AE", "progress": "#6E80A6",
+    "todo": "#C7C7CD", "cancel": "#E1E1E5"
+  },
+  "roadmap": {
+    "concluido": "#5B9E7D", "andamento": "#6E80A6", "pendente": "#C4C6CD",
+    "risco": "#C05F5F"
+  },
+  "font": { "family": "\"Afya Sans Pro\", \"Afya Sans\", Arial, Helvetica, sans-serif" },
+  "shape": { "radius": "12px" }
+}
