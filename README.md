@@ -10,15 +10,23 @@ nenhuma regra de negócio**.
 | 0 | Fundação: design tokens + contrato de dados | ✅ `docs/` |
 | 1 | Isolar a lógica (remover acoplamento com Streamlit) | ✅ `backend/app/core` + provider sem `st.cache_data` |
 | 2 | Camada de API (FastAPI, 2 endpoints) | ✅ `backend/` |
-| 3 | Design System (tokens/tipografia/componentes) | 🟡 tokens prontos; componentes na Fase 4 |
-| 4 | Front novo (React + Tailwind) | ⏳ próximo |
+| 3 | Design System (tokens/tipografia/componentes) | ✅ tokens em `docs/` + `frontend/src/index.css` |
+| 4 | Front novo (React + Vite + Tailwind + TS) | ✅ `frontend/` |
 | 5 | Deploy no Render + regressão | ⏳ (semente: `scripts/parity_report.py`) |
 
 ## Estrutura
 ```
 backend/   # API FastAPI (Fases 1–2). Roda em modo mock sem Jira.
+frontend/  # App React + Vite + Tailwind + TS (Fase 4). Consome a API.
 docs/      # DATA_CONTRACT.md, DESIGN_TOKENS.md, design-tokens.(css|json)
-frontend/  # (Fase 4) app React + Vite + Tailwind — a fazer
+```
+
+## Rodar tudo em dev (dois terminais)
+```bash
+# terminal 1 — backend
+cd backend && pip install -r requirements.txt && DATA_SOURCE=mock uvicorn app.main:app --reload --port 8000
+# terminal 2 — frontend
+cd frontend && npm install && npm run dev      # http://localhost:5173
 ```
 
 ## Começar (backend, modo mock)
