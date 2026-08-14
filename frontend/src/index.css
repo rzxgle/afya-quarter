@@ -131,6 +131,12 @@ a{color:var(--blue);text-decoration:none} a:hover{text-decoration:underline}
 .epics{border-top:1px solid var(--line-soft)}
 .epic{padding:16px 20px;border-bottom:1px solid var(--line-soft)} .epic:last-child{border-bottom:none}
 .epic.done .e-key{color:var(--st-done)}
+.epic-main[role="button"]{cursor:pointer}
+.epic-main[role="button"]:hover .e-caret{color:var(--brand)}
+.e-caret{display:inline-flex;color:var(--ink-3);flex:0 0 auto;margin-top:2px;transition:transform .2s,color .12s}
+.epic-main[aria-expanded="true"] .e-caret{transform:rotate(90deg)}
+.e-cbar{margin-top:10px}
+.e-detail{margin-top:12px}
 .e-titlerow{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap}
 .e-title{font-size:15px;font-weight:600}
 .e-title .e-key{font-weight:700}
