@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Team, Breakdown } from "../lib/types";
 import { pct } from "../lib/format";
 import { CompositionBar } from "./Kpi";
@@ -17,27 +18,46 @@ function aggBreakdown(team: Team): Breakdown {
   return a;
 }
 
-function SquadCard({ team }: { team: Team }) {
+function SquadCard({ team, defaultOpen }: { team: Team; defaultOpen: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
+  const epicCount = team.epics.length;
+  const bodyId = `squad-${team.team.replace(/\s+/g, "-")}`;
+
   return (
     <section className="squad">
-      <div className="squad-head">
-        <div>
-          <div className="s-name">{team.team}</div>
-          <div className="s-count">
-            {team.completed_items}/{team.total_items} histórias
-          </div>
-        </div>
-        <div className="s-spacer" />
-        <div className="s-pct">{pct(team.progress)}</div>
-      </div>
+      <button
+        className="squad-head"
+        aria-expanded={open}
+        aria-controls={bodyId}
+        onClick={() => setOpen((o) => !o)}
+      >
+        <span className="squad-caret" aria-hidden="true">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m9 18 6-6-6-6" />
+          </svg>
+        </span>
+        <span className="s-headtext">
+          <span className="s-name">{team.team}</span>
+          <span className="s-count">
+            {team.completed_items}/{team.total_items} histórias · {epicCount} épico
+            {epicCount === 1 ? "" : "s"}
+          </span>
+        </span>
+        <span className="s-spacer" />
+        <span className="s-pct">{pct(team.progress)}</span>
+      </button>
+
       <div className="squad-comp">
         <CompositionBar bd={aggBreakdown(team)} />
       </div>
-      <div className="epics">
-        {team.epics.map((ep) => (
-          <EpicCard key={ep.epic} epic={ep} />
-        ))}
-      </div>
+
+      {open && (
+        <div className="epics" id={bodyId}>
+          {team.epics.map((ep) => (
+            <EpicCard key={ep.epic} epic={ep} />
+          ))}
+        </div>
+      )}
     </section>
   );
 }
@@ -50,10 +70,12 @@ export default function TeamsView({ teams }: { teams: Team[] }) {
       </div>
     );
   }
+  // Uma única squad no filtro -> já abre; caso contrário, colapsado.
+  const singleOpen = teams.length === 1;
   return (
     <div>
       {teams.map((t) => (
-        <SquadCard key={t.team} team={t} />
+        <SquadCard key={t.team} team={t} defaultOpen={singleOpen} />
       ))}
     </div>
   );
