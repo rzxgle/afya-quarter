@@ -65,10 +65,8 @@ export default function TrackingPage() {
 
       <div className="legend">
         <span><i className="sw" style={{ background: "var(--st-done)" }} /> Concluído</span>
-        <span><i className="sw" style={{ background: "var(--st-approval)" }} /> Em homologação</span>
         <span><i className="sw" style={{ background: "var(--st-progress)" }} /> Em andamento</span>
         <span><i className="sw" style={{ background: "var(--st-todo)" }} /> A fazer</span>
-        <span><i className="sw" style={{ background: "var(--st-cancel)" }} /> Cancelado</span>
       </div>
 
       <div style={{ opacity: loading ? 0.6 : 1, transition: "opacity .15s" }}>

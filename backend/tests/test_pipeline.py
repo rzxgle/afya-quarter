@@ -20,10 +20,10 @@ def test_options():
 def test_tracking_totais_fecham():
     t = pipeline.build_tracking("Afya Bridge", "Q2")
     k = t["kpis"]
-    # cluster = 12/34 = 35.29...
+    # Homologação conta como done -> cluster = 15/34 = 44.1
     assert k["total_items"] == 34
-    assert k["total_completed"] == 12
-    assert round(k["cluster_progress"], 1) == 35.3
+    assert k["total_completed"] == 15
+    assert round(k["cluster_progress"], 1) == 44.1
     assert k["total_epics"] == 10
     assert k["epics_at_risk"] == 2
 
@@ -35,12 +35,14 @@ def test_tracking_totais_fecham():
 def test_tracking_epico_breakdown():
     t = pipeline.build_tracking("Afya Bridge", "Q2")
     ep = next(e for tm in t["teams"] for e in tm["epics"] if e["epic"] == "APR-1204")
-    assert ep["progress"] == 20.0
+    # homologação vira done: progresso sobe para 40% e approval zera
+    assert ep["progress"] == 40.0
     b = ep["breakdown"]
-    assert b == {"done": 1, "approval": 1, "inprogress": 2, "todo": 1, "cancelled": 1}
+    assert b == {"done": 2, "approval": 0, "inprogress": 2, "todo": 1, "cancelled": 1}
     # itens ordenados por prioridade e com kind coerente
     kinds = {i["issue"]: i["kind"] for i in ep["items"]}
     assert kinds["APR-1210"] == "done"
+    assert kinds["APR-1214"] == "done"  # antes era "approval" (Em Homologação)
     assert kinds["APR-1219"] == "cancelled"
 
 

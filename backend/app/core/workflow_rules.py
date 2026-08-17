@@ -9,7 +9,13 @@ DONE_STATUS = [
     "PRONTO PARA MEDIÇÃO",
     "Aprovação Comitê",
     "Deploy em Staging",
-    "Concluído"
+    "Concluído",
+    # Homologação agora conta como concluído (decisão de regra):
+    "Em Homologação",
+    "Pronto para Staging",
+    "PRONTO PARA HOMOLOGAÇÃO INTEGRADA",
+    "Homologação integrada",
+    "Staging"
 ]
 
 IN_PROGRESS_STATUS = [
@@ -22,13 +28,8 @@ IN_PROGRESS_STATUS = [
     "Beta"
 ]
 
-IN_APPROVAL_STATUS = [
-    "Em Homologação",
-    "Pronto para Staging",
-    "PRONTO PARA HOMOLOGAÇÃO INTEGRADA",
-    "Homologação integrada",
-    "Staging"
-]
+# Esvaziado: os status antes de aprovação foram para DONE_STATUS.
+IN_APPROVAL_STATUS = []
 
 IGNORED_STATUS = [
     "Inválido",

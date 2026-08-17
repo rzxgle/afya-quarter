@@ -29,17 +29,16 @@ export function Kpi({
 }
 
 export function CompositionBar({ bd }: { bd: Breakdown }) {
-  const tot =
-    bd.done + bd.approval + bd.inprogress + bd.todo + bd.cancelled || 1;
+  // 3 categorias: Concluído / Em andamento / A fazer.
+  // "Em homologação" já entra em `done` (regra do workflow); cancelado é ignorado.
+  const tot = bd.done + bd.inprogress + bd.todo || 1;
   const seg = (n: number, cls: string) =>
     n > 0 ? <i className={cls} style={{ width: `${(n / tot) * 100}%` }} /> : null;
   return (
     <div className="compbar">
       {seg(bd.done, "seg-done")}
-      {seg(bd.approval, "seg-approval")}
       {seg(bd.inprogress, "seg-progress")}
       {seg(bd.todo, "seg-todo")}
-      {seg(bd.cancelled, "seg-cancel")}
     </div>
   );
 }

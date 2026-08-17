@@ -39,7 +39,7 @@ export default function EpicCard({ epic }: { epic: Epic }) {
 
   const bd = epic.breakdown;
   const barTitle = bd
-    ? `Concluído: ${bd.done} · Em homologação: ${bd.approval} · Em andamento: ${bd.inprogress} · A fazer: ${bd.todo} · Cancelados: ${bd.cancelled}`
+    ? `Concluído: ${bd.done} · Em andamento: ${bd.inprogress} · A fazer: ${bd.todo}`
     : undefined;
 
   const toggle = () => expandable && setOpen((o) => !o);
