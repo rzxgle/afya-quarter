@@ -1,4 +1,3 @@
-import { NavLink } from "react-router-dom";
 import { useFilters } from "../state/filters";
 
 export default function TopBar() {
@@ -9,15 +8,9 @@ export default function TopBar() {
       <img className="logo" src="/afya-logo.png" alt="Afya" />
       <div className="sep" />
       <div className="title">
-        Quarter
-        <small>Progresso e roadmap dos épicos</small>
+        Quarter Tracking
+        <small>Progresso de histórias e épicos</small>
       </div>
-      <nav className="nav" style={{ marginLeft: 8 }}>
-        <NavLink to="/" end>
-          Tracking
-        </NavLink>
-        <NavLink to="/roadmap">Roadmap</NavLink>
-      </nav>
       <div className="spacer" />
       <div className="updated">
         <span className="dot" /> Cache de 5 min

@@ -3,12 +3,9 @@ import { FiltersProvider, useFilters } from "./state/filters";
 import TopBar from "./components/TopBar";
 import Sidebar from "./components/Sidebar";
 import TrackingPage from "./pages/TrackingPage";
-import RoadmapPage from "./pages/RoadmapPage";
-import { useLocation } from "react-router-dom";
 
 function Layout() {
   const { optionsError } = useFilters();
-  const isRoadmap = useLocation().pathname.startsWith("/roadmap");
 
   return (
     <>
@@ -21,11 +18,10 @@ function Layout() {
         </div>
       ) : (
         <div className="shell">
-          <Sidebar showOnlyDates={isRoadmap} />
+          <Sidebar />
           <main className="main">
             <Routes>
               <Route path="/" element={<TrackingPage />} />
-              <Route path="/roadmap" element={<RoadmapPage />} />
             </Routes>
           </main>
         </div>

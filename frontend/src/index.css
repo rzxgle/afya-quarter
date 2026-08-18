@@ -263,3 +263,35 @@ a{color:var(--blue);text-decoration:none} a:hover{text-decoration:underline}
   .sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--line)}
   .main{padding:20px 16px 48px}
 }
+
+/* ---------- Indicadores consolidados (Histórias | Épicos) ---------- */
+.indicators{display:grid;grid-template-columns:0.9fr 1.25fr;gap:16px;margin-bottom:24px}
+.ind-panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:18px 20px;position:relative;overflow:hidden}
+.ind-panel::before{content:"";position:absolute;left:0;top:0;height:3px;width:100%;background:var(--accent,var(--brand))}
+.ind-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:700;
+  margin-bottom:12px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ind-label .cnt{letter-spacing:0;text-transform:none;font-weight:500;font-size:12px}
+.ind-big{font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.ind-big small{font-size:15px;font-weight:600;color:var(--ink-3)}
+.ind-mut{color:var(--ink-3);font-size:12.5px;margin-top:6px}
+.ind-track{height:7px;border-radius:99px;background:var(--line-soft);margin-top:12px;overflow:hidden}
+.ind-track>span{display:block;height:100%;border-radius:99px;background:var(--accent,var(--brand))}
+.ind-sep{height:1px;background:var(--line-soft);margin:14px 0}
+.ind-sub{display:flex;gap:20px;align-items:flex-end}
+.ind-sub .col small{display:block;font-size:11.5px;color:var(--ink-3);font-weight:600;margin-bottom:2px}
+.ind-sub .n{font-size:20px;font-weight:800}
+.ind-compbar{display:flex;height:14px;border-radius:99px;overflow:hidden;background:var(--line-soft);gap:2px;margin-top:4px}
+.ind-compbar>i{display:block;height:100%}
+.ind-legend{display:flex;flex-wrap:wrap;gap:14px 18px;margin-top:12px;font-size:12.5px;color:var(--ink-2);align-items:center}
+.ind-flags{display:flex;gap:18px;margin-top:14px;font-size:12.5px}
+.epi-click{background:none;border:none;font:inherit;color:var(--ink-2);cursor:pointer;padding:2px 0;
+  display:inline-flex;align-items:center;gap:7px;border-radius:6px}
+.epi-click:hover{color:var(--brand)} .epi-click:hover b{color:var(--brand)}
+.epi-click i{width:9px;height:9px;border-radius:3px;flex:0 0 auto}
+.epi-click b{font-weight:800}
+.epi-flag.on{color:var(--rm-risco)} .epi-flag.on:hover{color:var(--rm-risco)} .epi-flag.on:hover b{color:var(--rm-risco)}
+.epi-flag.off{color:var(--ink-3)}
+.ind-bigbtn{background:none;border:none;padding:0;font:inherit;color:inherit;cursor:pointer;text-align:left}
+.ind-bigbtn:hover{color:var(--brand)} .ind-bigbtn:hover small{color:var(--brand)}
+@media (max-width:820px){.indicators{grid-template-columns:1fr}}
