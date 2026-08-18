@@ -7,15 +7,17 @@ export function Kpi({
   accent = "var(--brand)",
   sub,
   track,
+  onClick,
 }: {
   label: string;
   value: ReactNode;
   accent?: string;
   sub?: ReactNode;
   track?: number; // 0..100
+  onClick?: () => void;
 }) {
-  return (
-    <div className="kpi" style={{ ["--accent" as string]: accent }}>
+  const content = (
+    <>
       <div className="k-label">{label}</div>
       <div className="k-value">{value}</div>
       {track !== undefined && (
@@ -24,8 +26,24 @@ export function Kpi({
         </div>
       )}
       {sub !== undefined && <div className="k-sub">{sub}</div>}
-    </div>
+    </>
   );
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        className="kpi kpi-clickable"
+        style={{ ["--accent" as string]: accent }}
+        onClick={onClick}
+        aria-label={`${label}: ver detalhes`}
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return <div className="kpi" style={{ ["--accent" as string]: accent }}>{content}</div>;
 }
 
 export function CompositionBar({ bd }: { bd: Breakdown }) {

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { api } from "../lib/api";
 import { useFetch } from "../lib/useFetch";
 import { useFilters } from "../state/filters";
@@ -6,11 +6,35 @@ import { pct } from "../lib/format";
 import { Kpi } from "../components/Kpi";
 import Gantt from "../components/Gantt";
 import TeamsView from "../components/TeamsView";
+import KpiDrawer from "../components/KpiDrawer";
+import type { RoadmapRow } from "../lib/types";
 
 const NEUTRAL = "#DCDCE0";
 
+type KpiSelection = "completed-rate" | "delayed" | "completed" | "in-progress" | "not-started" | "total";
+
+const DRAWER_TITLES: Record<KpiSelection, string> = {
+  "completed-rate": "Épicos concluídos",
+  delayed: "Épicos atrasados",
+  completed: "Concluídos",
+  "in-progress": "Em andamento",
+  "not-started": "Não iniciados (pendentes)",
+  total: "Total de épicos",
+};
+
+function matchesKpi(row: RoadmapRow, selection: KpiSelection) {
+  const progress = row.progress ?? 0;
+  if (selection === "total") return true;
+  if (selection === "completed" || selection === "completed-rate") return progress >= 100;
+  if (selection === "delayed") return row.roadmap_status === "Atrasado";
+  if (selection === "not-started") return progress === 0 && row.roadmap_status !== "Atrasado";
+  return progress > 0 && progress < 100 && row.roadmap_status !== "Atrasado";
+}
+
 export default function RoadmapPage() {
   const f = useFilters();
+  const [selectedKpi, setSelectedKpi] = useState<KpiSelection | null>(null);
+  const closeDrawer = useCallback(() => setSelectedKpi(null), []);
 
   const { data, loading, error } = useFetch(
     () =>
@@ -37,10 +61,21 @@ export default function RoadmapPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
+  const uniqueRows = useMemo(() => {
+    const byEpic = new Map<string, RoadmapRow>();
+    for (const row of data?.roadmap ?? []) {
+      if (row.epic && !byEpic.has(row.epic)) byEpic.set(row.epic, row);
+    }
+    return Array.from(byEpic.values());
+  }, [data?.roadmap]);
+
   if (error) return <div className="state err">Erro ao carregar: {error}</div>;
   if (!data) return <div className="state">Carregando roadmap…</div>;
 
   const k = data.kpis;
+  const drawerRows = selectedKpi
+    ? uniqueRows.filter((row) => matchesKpi(row, selectedKpi))
+    : [];
 
   return (
     <>
@@ -49,12 +84,12 @@ export default function RoadmapPage() {
       </p>
 
       <section className="kpis k6">
-        <Kpi label="% Épicos concluídos" value={pct(k.completion_rate)} accent="var(--brand)" />
-        <Kpi label="Épicos atrasados" value={k.delayed} accent={k.delayed > 0 ? "var(--rm-risco)" : NEUTRAL} />
-        <Kpi label="Concluídos" value={k.completed} accent={NEUTRAL} />
-        <Kpi label="Em andamento" value={k.in_progress} accent={NEUTRAL} />
-        <Kpi label="Não iniciado (pendente)" value={k.not_started} accent={NEUTRAL} />
-        <Kpi label="Total de épicos" value={k.total_epics} accent={NEUTRAL} />
+        <Kpi label="% Épicos concluídos" value={pct(k.completion_rate)} accent="var(--brand)" onClick={() => setSelectedKpi("completed-rate")} />
+        <Kpi label="Épicos atrasados" value={k.delayed} accent={k.delayed > 0 ? "var(--rm-risco)" : NEUTRAL} onClick={() => setSelectedKpi("delayed")} />
+        <Kpi label="Concluídos" value={k.completed} accent={NEUTRAL} onClick={() => setSelectedKpi("completed")} />
+        <Kpi label="Em andamento" value={k.in_progress} accent={NEUTRAL} onClick={() => setSelectedKpi("in-progress")} />
+        <Kpi label="Não iniciado (pendente)" value={k.not_started} accent={NEUTRAL} onClick={() => setSelectedKpi("not-started")} />
+        <Kpi label="Total de épicos" value={k.total_epics} accent={NEUTRAL} onClick={() => setSelectedKpi("total")} />
       </section>
 
       <div className="section-title">🗓️ Roadmap do quarter</div>
@@ -82,6 +117,10 @@ export default function RoadmapPage() {
       <TeamsView teams={data.teams} />
 
       <p className="foot">⏱️ Dados atualizados a cada 5 minutos</p>
+
+      {selectedKpi && (
+        <KpiDrawer title={DRAWER_TITLES[selectedKpi]} rows={drawerRows} onClose={closeDrawer} />
+      )}
     </>
   );
 }
