@@ -73,7 +73,7 @@ export default function TrackingPage() {
         <TeamsView teams={data.teams} />
       </div>
 
-      <p className="foot">⏱️ Dados atualizados a cada 5 minutos</p>
+      <p className="foot">Dados atualizados a cada 5 minutos</p>
     </>
   );
 }

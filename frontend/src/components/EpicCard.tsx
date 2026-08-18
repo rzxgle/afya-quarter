@@ -107,7 +107,7 @@ export default function EpicCard({ epic }: { epic: Epic }) {
 
         {epic.is_empty ? (
           <div className="e-empty">
-            📝 Este épico ainda não possui histórias válidas cadastradas
+            Este épico ainda não possui histórias válidas cadastradas
           </div>
         ) : (
           bd && (
@@ -124,7 +124,7 @@ export default function EpicCard({ epic }: { epic: Epic }) {
             <div className="e-note risk">Motivo do risco: {epic.epic_risk_reason}</div>
           )}
           {epic.shared_activities && (
-            <div className="e-note">📎 Épico com atividades compartilhadas</div>
+            <div className="e-note">Épico com atividades compartilhadas</div>
           )}
           <div className="items">
             {epic.items.map((it) => (

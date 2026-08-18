@@ -92,7 +92,7 @@ export default function Gantt({
                   <a className="key" href={r.epic_url ?? "#"} target="_blank" rel="noopener noreferrer">
                     {r.epic}
                   </a>
-                  {noDate && <span className="nodate">⚠️ sem datas</span>}
+                  {noDate && <span className="nodate">sem datas</span>}
                 </div>
               );
             })}
@@ -188,7 +188,7 @@ function GanttTip({ tip }: { tip: TipState }) {
           <br />
           <span className="row2" style={{ color: "#F3B0B0" }}>
             <span className="k" style={{ color: "#F3B0B0" }}>
-              ⚠ Em risco:
+              Em risco:
             </span>{" "}
             {r.epic_risk_reason || "sinalizado"}
           </span>

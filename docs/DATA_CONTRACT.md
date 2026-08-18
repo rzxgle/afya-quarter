@@ -104,7 +104,7 @@ Notas de paridade:
 - `epic_status` é o nome original do status do épico no Jira.
 - `epic_status_kind` classifica esse valor pelas regras de `workflow_rules.py`: `done | inprogress | todo | cancelled`.
 - `progress` continua sendo calculado pelas histórias filhas e não define o status do épico.
-- `temporal_status`, `epic_risk` e `is_transbordo` são dimensões independentes do workflow.
+- `temporal_status`, `epic_risk` e `is_transbordo` são dimensões independentes; épicos classificados como `done` recebem `temporal_status = "Concluído"` e nunca `"Prazo passou"`.
 - `delayed` conta épicos com prazo passado que não estejam classificados como `done`; ele pode se sobrepor aos KPIs de andamento e não iniciado.
 - Épicos sem datas aparecem em `roadmap` (com `start/end = null`) e são omitidos quando `only_with_dates=true`.
 

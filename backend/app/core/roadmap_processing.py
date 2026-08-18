@@ -67,6 +67,9 @@ def build_roadmap_dataframe(epic_progress, epic_df, epic_map):
         start = row.get("start_date")
         end = row.get("end_date")
 
+        if is_done(row.get("epic_status", "") or ""):
+            return "Concluído"
+
         if pd.isna(start) or pd.isna(end):
             return "Sem datas"
 

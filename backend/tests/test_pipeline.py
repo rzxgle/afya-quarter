@@ -84,4 +84,5 @@ def test_roadmap_kpis_usam_status_do_epico():
     assert epic["progress"] < 100
     assert epic["epic_status"] == "Concluído"
     assert epic["epic_status_kind"] == "done"
+    assert epic["temporal_status"] == "Concluído"
     assert len(r["sprints"]) == 5

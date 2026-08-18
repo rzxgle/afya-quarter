@@ -91,7 +91,7 @@ export default function RoadmapPage() {
         <Kpi label="Total de épicos" value={k.total_epics} accent={NEUTRAL} onClick={() => setSelectedKpi("total")} />
       </section>
 
-      <div className="section-title">🗓️ Roadmap do quarter</div>
+      <div className="section-title">Roadmap do quarter</div>
       <div className="legend">
         <span><i className="sw" style={{ background: "var(--rm-concluido)" }} /> Concluído</span>
         <span><i className="sw" style={{ background: "var(--rm-andamento)" }} /> Em andamento</span>
@@ -108,14 +108,14 @@ export default function RoadmapPage() {
 
       <div className="divider" />
       <div className="section-title">
-        📋 Visão operacional{" "}
+        Visão operacional{" "}
         <span className="muted">
           ({data.teams.reduce((a, t) => a + t.epics.length, 0)} épicos)
         </span>
       </div>
       <TeamsView teams={data.teams} />
 
-      <p className="foot">⏱️ Dados atualizados a cada 5 minutos</p>
+      <p className="foot">Dados atualizados a cada 5 minutos</p>
 
       {selectedKpi && (
         <KpiDrawer title={DRAWER_TITLES[selectedKpi]} rows={drawerRows} onClose={closeDrawer} />
