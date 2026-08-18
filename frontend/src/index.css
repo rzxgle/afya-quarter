@@ -205,21 +205,31 @@ a{color:var(--blue);text-decoration:none} a:hover{text-decoration:underline}
 .legend .sw{width:22px;height:9px;border-radius:3px}
 .gantt-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
   box-shadow:var(--shadow);padding:18px 18px 14px;margin-bottom:14px;overflow-x:auto}
-.gantt{--labelw:230px;--rowh:38px;min-width:760px}
+.gantt{--labelw:320px;--rowh:38px;min-width:820px}
 .gantt-grid{display:grid;grid-template-columns:var(--labelw) 1fr}
 .g-ruler{position:relative;height:34px;border-bottom:1px solid var(--line)}
 .g-ruler .qbound{position:absolute;top:16px;font-size:10.5px;color:var(--ink-3);white-space:nowrap}
 .g-ruler .sprint{position:absolute;top:2px;transform:translateX(-50%);font-size:9.5px;color:var(--ink-3);white-space:nowrap}
 .g-ruler .today-lbl{position:absolute;top:2px;transform:translateX(-50%);font-size:11px;color:var(--brand);font-weight:700}
 .g-labels{display:flex;flex-direction:column}
-.g-lab{height:var(--rowh);display:flex;align-items:center;gap:7px;padding-right:12px;
-  font-size:12.5px;border-bottom:1px solid var(--line-soft);overflow:hidden}
-.g-lab .team{color:var(--ink-3);font-weight:500}
-.g-lab .key{font-weight:700}
-.g-lab a{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.g-lab .nodate{font-size:10px;color:var(--rm-risco);font-weight:600}
-.g-plot{position:relative;border-left:1px solid var(--line-soft)}
+/* Cabeçalho de squad (colapsável) */
+.g-group{display:flex;flex-direction:column;justify-content:center;gap:1px;padding:0 12px 0 14px;
+  border-left:3px solid var(--brand);background:#FAFAFB;border-bottom:1px solid var(--line-soft);
+  width:100%;border-top:none;border-right:none;font:inherit;color:inherit;text-align:left;cursor:pointer;transition:background .12s}
+.g-group:hover{background:#F2F1F3}
+.g-grow1{display:flex;align-items:center;gap:8px;min-width:0}
+.g-caret{display:inline-flex;color:var(--ink-3);flex:0 0 auto;transition:transform .2s}
+.g-group[aria-expanded="true"] .g-caret{transform:rotate(90deg)}
+.g-gname{font-weight:700;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.g-gmeta{font-size:11.5px;color:var(--ink-3);padding-left:20px}
+/* Linha de épico (chave + nome) */
+.g-epic{display:flex;flex-direction:column;justify-content:center;gap:1px;padding:0 12px 0 18px;border-bottom:1px solid var(--line-soft);min-width:0}
+.g-ekey{font-weight:700;font-size:12.5px;color:var(--blue);white-space:nowrap}
+.g-ename{font-size:12px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.g-ename .nodate{color:var(--rm-risco);font-weight:600}
+.g-plot{position:relative;border-left:1px solid var(--line)}
 .g-plot .rowline{position:absolute;left:0;right:0;height:1px;background:var(--line-soft)}
+.grpband{position:absolute;left:0;right:0;background:#FAFAFB;border-top:1px solid var(--line-soft)}
 .g-shade{position:absolute;top:0;bottom:0;background:#111827;opacity:.055}
 .g-vline{position:absolute;top:0;bottom:0;width:0;border-left:1px dotted #CBCBD2}
 .g-vline.qb{border-left:1px dashed #B7B7BE}

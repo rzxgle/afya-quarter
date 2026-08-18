@@ -2,7 +2,8 @@ import { useState } from "react";
 import type { RoadmapRow, Sprint, Period } from "../lib/types";
 import { pct, fmtShort, fmtFull, toDate, todayISO } from "../lib/format";
 
-const ROW_H = 38;
+const HEADER_H = 44;
+const EPIC_H = 46;
 
 type Bucket = "concluido" | "andamento" | "pendente";
 function bucket(statusKind: RoadmapRow["epic_status_kind"]): Bucket {
@@ -16,10 +17,39 @@ const BUCKET_LABEL: Record<Bucket, string> = {
   pendente: "Pendente",
 };
 
+interface Group {
+  team: string;
+  epics: RoadmapRow[];
+  done: number;
+  total: number;
+}
+
 interface TipState {
   x: number;
   y: number;
   row: RoadmapRow;
+}
+
+function groupByTeam(rows: RoadmapRow[]): Group[] {
+  const order: string[] = [];
+  const map = new Map<string, RoadmapRow[]>();
+  for (const r of rows) {
+    const team = r.team ?? "Sem squad";
+    if (!map.has(team)) {
+      map.set(team, []);
+      order.push(team);
+    }
+    map.get(team)!.push(r);
+  }
+  return order.map((team) => {
+    const epics = map.get(team)!;
+    return {
+      team,
+      epics,
+      done: epics.filter((e) => e.progress >= 100).length,
+      total: epics.length,
+    };
+  });
 }
 
 export default function Gantt({
@@ -32,6 +62,7 @@ export default function Gantt({
   sprints: Sprint[];
 }) {
   const [tip, setTip] = useState<TipState | null>(null);
+  const [openMap, setOpenMap] = useState<Record<string, boolean>>({});
   const today = todayISO();
 
   if (!period.start_date || !period.end_date) return null;
@@ -51,7 +82,28 @@ export default function Gantt({
     );
   }
 
-  const plotH = rows.length * ROW_H;
+  const groups = groupByTeam(rows);
+  const singleGroup = groups.length === 1; // filtrou 1 squad -> já abre
+  const isOpen = (team: string) => openMap[team] ?? singleGroup;
+  const toggle = (team: string) =>
+    setOpenMap((m) => ({ ...m, [team]: !(m[team] ?? singleGroup) }));
+
+  // Monta as linhas visíveis (header + épicos das squads abertas) com offsets
+  interface HeaderRow { kind: "header"; group: Group; y: number; h: number }
+  interface EpicRow { kind: "epic"; row: RoadmapRow; y: number; h: number }
+  const display: (HeaderRow | EpicRow)[] = [];
+  let y = 0;
+  for (const g of groups) {
+    display.push({ kind: "header", group: g, y, h: HEADER_H });
+    y += HEADER_H;
+    if (isOpen(g.team)) {
+      for (const r of g.epics) {
+        display.push({ kind: "epic", row: r, y, h: EPIC_H });
+        y += EPIC_H;
+      }
+    }
+  }
+  const totalH = y;
   const todayX = xp(today);
 
   return (
@@ -82,24 +134,50 @@ export default function Gantt({
             )}
           </div>
 
-          {/* Labels */}
+          {/* Labels (grupos + épicos) */}
           <div className="g-labels">
-            {rows.map((r) => {
-              const noDate = !r.start_date || !r.end_date;
-              return (
-                <div className="g-lab" key={`${r.team}-${r.epic}`}>
-                  <span className="team">{(r.team ?? "").replace("Squad ", "")}</span>
-                  <a className="key" href={r.epic_url ?? "#"} target="_blank" rel="noopener noreferrer">
-                    {r.epic}
+            {display.map((d) =>
+              d.kind === "header" ? (
+                <button
+                  key={`h-${d.group.team}`}
+                  className="g-group"
+                  style={{ height: d.h }}
+                  aria-expanded={isOpen(d.group.team)}
+                  onClick={() => toggle(d.group.team)}
+                >
+                  <span className="g-grow1">
+                    <span className="g-caret" aria-hidden="true">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="m9 18 6-6-6-6" />
+                      </svg>
+                    </span>
+                    <span className="g-gname" title={d.group.team}>
+                      {d.group.team}
+                    </span>
+                  </span>
+                  <span className="g-gmeta">
+                    {d.group.total} épico{d.group.total === 1 ? "" : "s"} · {d.group.done}/
+                    {d.group.total} concl.
+                  </span>
+                </button>
+              ) : (
+                <div className="g-epic" style={{ height: d.h }} key={`e-${d.row.team}-${d.row.epic}`}>
+                  <a className="g-ekey" href={d.row.epic_url ?? "#"} target="_blank" rel="noopener noreferrer">
+                    {d.row.epic}
                   </a>
-                  {noDate && <span className="nodate">sem datas</span>}
+                  <span className="g-ename" title={d.row.epic_name}>
+                    {d.row.epic_name}
+                    {(!d.row.start_date || !d.row.end_date) && (
+                      <span className="nodate"> · sem datas</span>
+                    )}
+                  </span>
                 </div>
-              );
-            })}
+              ),
+            )}
           </div>
 
           {/* Plot */}
-          <div className="g-plot" style={{ height: plotH }}>
+          <div className="g-plot" style={{ height: totalH }}>
             <div className="g-shade" style={{ left: 0, width: `${clamp(todayX)}%` }} />
             <div className="g-vline qb" style={{ left: 0 }} />
             <div className="g-vline qb" style={{ left: "100%" }} />
@@ -112,34 +190,42 @@ export default function Gantt({
             {todayX >= 0 && todayX <= 100 && (
               <div className="g-today" style={{ left: `${todayX}%` }} />
             )}
-            {rows.map((_, i) => (
-              <div className="rowline" key={`line-${i}`} style={{ top: (i + 1) * ROW_H }} />
-            ))}
-            {rows.map((r, i) => {
+
+            {/* faixas de grupo + linhas-guia */}
+            {display.map((d) =>
+              d.kind === "header" ? (
+                <div className="grpband" key={`b-${d.group.team}`} style={{ top: d.y, height: d.h }} />
+              ) : (
+                <div className="rowline" key={`l-${d.row.team}-${d.row.epic}`} style={{ top: d.y + d.h }} />
+              ),
+            )}
+
+            {/* barras (só épicos com datas) */}
+            {display.map((d) => {
+              if (d.kind !== "epic") return null;
+              const r = d.row;
               if (!r.start_date || !r.end_date) return null;
               const left = xp(r.start_date);
               const width = Math.max(xp(r.end_date) - left, 0);
               const cls = `g-bar bar-${bucket(r.epic_status_kind)}${r.epic_risk ? " risk" : ""}`;
               const narrow = width < 7;
-              const top = i * ROW_H + 7;
+              const barH = d.h - 18;
+              const top = d.y + (d.h - barH) / 2;
               return (
                 <div
-                  key={`bar-${i}`}
+                  key={`bar-${r.team}-${r.epic}`}
                   className={cls}
                   style={{
                     top,
                     left: `${left}%`,
                     width: `${width}%`,
+                    height: barH,
                     minWidth: narrow ? 10 : undefined,
                   }}
                   onMouseMove={(e) => setTip({ x: e.clientX, y: e.clientY, row: r })}
                   onMouseLeave={() => setTip(null)}
                 >
-                  {narrow ? (
-                    <span className="outlabel">{pct(r.progress)}</span>
-                  ) : (
-                    pct(r.progress)
-                  )}
+                  {narrow ? <span className="outlabel">{pct(r.progress)}</span> : pct(r.progress)}
                 </div>
               );
             })}
