@@ -30,6 +30,7 @@ interface FiltersState {
   setNoTeams: () => void;
   setOnlyWithDates: (b: boolean) => void;
   setAvailableTeams: (t: string[]) => void;
+  resetFilters: () => void;
   doRefresh: () => Promise<void>;
 }
 
@@ -99,12 +100,22 @@ export function FiltersProvider({ children }: { children: ReactNode }) {
       const next = base.includes(t)
         ? base.filter((x) => x !== t)
         : [...base, t];
-      setSelectedTeams(next);
+      setSelectedTeams(next.length === availableTeams.length ? null : next);
     },
     setAllTeams: () => setSelectedTeams(null),
     setNoTeams: () => setSelectedTeams([]),
     setOnlyWithDates,
     setAvailableTeams,
+    resetFilters: () => {
+      const first = options?.products[0];
+      if (first) {
+        setProductState(first.product);
+        setCycle(first.default_cycle);
+      }
+      setProjectView("Todos os projetos");
+      setSelectedTeams(null);
+      setOnlyWithDates(false);
+    },
     doRefresh: async () => {
       setRefreshing(true);
       try {

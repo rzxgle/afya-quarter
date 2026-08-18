@@ -1,13 +1,21 @@
 import { useEffect, useRef } from "react";
-import type { RoadmapRow } from "../lib/types";
+
+export interface KpiDrawerRow {
+  key: string;
+  summary: string;
+  status: string;
+  url?: string;
+}
 
 export default function KpiDrawer({
   title,
   rows,
+  itemLabel = "épico",
   onClose,
 }: {
   title: string;
-  rows: RoadmapRow[];
+  rows: KpiDrawerRow[];
+  itemLabel?: "épico" | "história";
   onClose: () => void;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -42,7 +50,7 @@ export default function KpiDrawer({
         <header className="drawer-head">
           <div>
             <h2 id="kpi-drawer-title">{title}</h2>
-            <p>{rows.length} {rows.length === 1 ? "épico" : "épicos"}</p>
+            <p>{rows.length} {rows.length === 1 ? itemLabel : `${itemLabel}s`}</p>
           </div>
           <button ref={closeRef} type="button" className="drawer-close" onClick={onClose} aria-label="Fechar detalhes" title="Fechar">
             ×
@@ -51,7 +59,7 @@ export default function KpiDrawer({
 
         <div className="drawer-body">
           {rows.length === 0 ? (
-            <p className="drawer-empty">Nenhum épico encontrado para este indicador.</p>
+            <p className="drawer-empty">Nenhuma informação encontrada para este indicador.</p>
           ) : (
             <div className="drawer-table-wrap">
               <table className="drawer-table">
@@ -64,14 +72,14 @@ export default function KpiDrawer({
                 </thead>
                 <tbody>
                   {rows.map((row) => (
-                    <tr key={row.epic}>
+                    <tr key={row.key}>
                       <td data-label="KEY">
-                        {row.epic_url ? (
-                          <a href={row.epic_url} target="_blank" rel="noopener noreferrer">{row.epic}</a>
-                        ) : row.epic}
+                        {row.url ? (
+                          <a href={row.url} target="_blank" rel="noopener noreferrer">{row.key}</a>
+                        ) : row.key}
                       </td>
-                      <td data-label="SUMMARY">{row.epic_name || "-"}</td>
-                      <td data-label="STATUS"><span className="drawer-status">{row.epic_status || "-"}</span></td>
+                      <td data-label="SUMMARY">{row.summary || "-"}</td>
+                      <td data-label="STATUS"><span className="drawer-status">{row.status || "-"}</span></td>
                     </tr>
                   ))}
                 </tbody>

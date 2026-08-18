@@ -10,9 +10,10 @@ import type { RoadmapRow } from "../lib/types";
 // Página única. Usa /api/roadmap (traz KPIs de épico, linhas p/ o drawer e as
 // squads). Os números de "histórias" são derivados da lista de squads.
 type KpiSelection =
-  | "completed-rate" | "delayed" | "completed" | "in-progress" | "not-started" | "total" | "risk";
+  | "stories" | "completed-rate" | "delayed" | "completed" | "in-progress" | "not-started" | "total" | "risk";
 
 const DRAWER_TITLES: Record<KpiSelection, string> = {
+  stories: "Histórias do quarter",
   "completed-rate": "Épicos concluídos",
   delayed: "Épicos atrasados",
   completed: "Épicos concluídos",
@@ -62,6 +63,25 @@ export default function TrackingPage() {
     return Array.from(byEpic.values());
   }, [data?.roadmap]);
 
+  const storyRows = useMemo(() => {
+    const byIssue = new Map<string, { key: string; summary: string; status: string; url: string }>();
+    for (const team of data?.teams ?? []) {
+      for (const epic of team.epics) {
+        for (const item of epic.items) {
+          if (item.kind !== "cancelled" && !byIssue.has(item.issue)) {
+            byIssue.set(item.issue, {
+              key: item.issue,
+              summary: item.summary,
+              status: item.status,
+              url: item.url,
+            });
+          }
+        }
+      }
+    }
+    return Array.from(byIssue.values());
+  }, [data?.teams]);
+
   if (error) return <div className="state err">Erro ao carregar: {error}</div>;
   if (!data) return <LoadingIndicators />;
 
@@ -78,7 +98,14 @@ export default function TrackingPage() {
   const epTot = k.completed + k.in_progress + k.not_started || 1;
   const w = (n: number) => `${(n / epTot) * 100}%`;
 
-  const drawerRows = selectedKpi ? uniqueRows.filter((r) => matchesKpi(r, selectedKpi)) : [];
+  const drawerRows = selectedKpi && selectedKpi !== "stories"
+    ? uniqueRows.filter((r) => matchesKpi(r, selectedKpi)).map((row) => ({
+        key: row.epic ?? "",
+        summary: row.epic_name,
+        status: row.epic_status,
+        url: row.epic_url ?? undefined,
+      }))
+    : storyRows;
 
   return (
     <>
@@ -90,7 +117,9 @@ export default function TrackingPage() {
         {/* -------- Histórias -------- */}
         <div className="ind-panel" style={{ ["--accent" as string]: "var(--brand)" }}>
           <div className="ind-label">Histórias</div>
-          <div className="ind-big">{pct(clusterProgress)}</div>
+          <button className="ind-bigbtn" onClick={() => open("stories")} aria-label="Ver histórias do quarter">
+            <span className="ind-big">{pct(clusterProgress)}</span>
+          </button>
           <div className="ind-mut">Progresso · {totalCompleted} de {totalItems} histórias concluídas</div>
           <div className="ind-track"><span style={{ width: `${clusterProgress}%` }} /></div>
           <div className="ind-sep" />
@@ -154,7 +183,12 @@ export default function TrackingPage() {
       <p className="foot">Dados atualizados a cada 5 minutos</p>
 
       {selectedKpi && (
-        <KpiDrawer title={DRAWER_TITLES[selectedKpi]} rows={drawerRows} onClose={closeDrawer} />
+        <KpiDrawer
+          title={DRAWER_TITLES[selectedKpi]}
+          rows={drawerRows}
+          itemLabel={selectedKpi === "stories" ? "história" : "épico"}
+          onClose={closeDrawer}
+        />
       )}
     </>
   );

@@ -118,7 +118,16 @@ export default function RoadmapPage() {
       <p className="foot">Dados atualizados a cada 5 minutos</p>
 
       {selectedKpi && (
-        <KpiDrawer title={DRAWER_TITLES[selectedKpi]} rows={drawerRows} onClose={closeDrawer} />
+        <KpiDrawer
+          title={DRAWER_TITLES[selectedKpi]}
+          rows={drawerRows.map((row) => ({
+            key: row.epic ?? "",
+            summary: row.epic_name,
+            status: row.epic_status,
+            url: row.epic_url ?? undefined,
+          }))}
+          onClose={closeDrawer}
+        />
       )}
     </>
   );
