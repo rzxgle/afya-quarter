@@ -1,5 +1,6 @@
 import pandas as pd
 from datetime import date
+from app.core.workflow_rules import is_done, is_in_progress, is_ignored
 
 
 def build_roadmap_dataframe(epic_progress, epic_df, epic_map):
@@ -31,28 +32,19 @@ def build_roadmap_dataframe(epic_progress, epic_df, epic_map):
         + roadmap_df["epic"]
     )
 
-    def classify_roadmap_status(row):
-        progress = row.get("progress", 0) or 0
-        end = row.get("end_date")
-        today = pd.to_datetime(date.today())
+    def classify_epic_status(status):
+        status = status or ""
+        if is_ignored(status):
+            return "cancelled"
+        if is_done(status):
+            return "done"
+        if is_in_progress(status):
+            return "inprogress"
+        return "todo"
 
-        if progress >= 100:
-            return "Concluído"
-
-        if pd.notna(end) and today > end:
-            return "Atrasado"
-
-        if row.get("epic_risk", False):
-            return "Em risco"
-
-        if row.get("is_transbordo", False):
-            return "Transbordo"
-
-        return "Em andamento"
-
-    roadmap_df["roadmap_status"] = roadmap_df.apply(
-        classify_roadmap_status,
-        axis=1
+    roadmap_df["epic_status"] = roadmap_df["epic_status"].fillna("")
+    roadmap_df["epic_status_kind"] = roadmap_df["epic_status"].apply(
+        classify_epic_status
     )
 
     roadmap_df["risk_label"] = roadmap_df["epic_risk"].apply(
@@ -72,15 +64,11 @@ def build_roadmap_dataframe(epic_progress, epic_df, epic_map):
     today = pd.to_datetime(date.today())
 
     def classify_temporal_status(row):
-        progress = row.get("progress", 0) or 0
         start = row.get("start_date")
         end = row.get("end_date")
 
         if pd.isna(start) or pd.isna(end):
             return "Sem datas"
-
-        if progress >= 100:
-            return "Concluído"
 
         if today < start:
             return "Ainda não iniciou"

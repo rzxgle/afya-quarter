@@ -23,12 +23,11 @@ const DRAWER_TITLES: Record<KpiSelection, string> = {
 };
 
 function matchesKpi(row: RoadmapRow, selection: KpiSelection) {
-  const progress = row.progress ?? 0;
   if (selection === "total") return true;
-  if (selection === "completed" || selection === "completed-rate") return progress >= 100;
-  if (selection === "delayed") return row.roadmap_status === "Atrasado";
-  if (selection === "not-started") return progress === 0 && row.roadmap_status !== "Atrasado";
-  return progress > 0 && progress < 100 && row.roadmap_status !== "Atrasado";
+  if (selection === "completed" || selection === "completed-rate") return row.epic_status_kind === "done";
+  if (selection === "delayed") return row.temporal_status === "Prazo passou" && row.epic_status_kind !== "done";
+  if (selection === "not-started") return row.epic_status_kind !== "done" && row.epic_status_kind !== "inprogress";
+  return row.epic_status_kind === "inprogress";
 }
 
 export default function RoadmapPage() {

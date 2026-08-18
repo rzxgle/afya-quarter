@@ -25,6 +25,7 @@ class Item(BaseModel):
 class Epic(BaseModel):
     epic: str
     epic_name: str
+    epic_status: str
     owner_team: str
     completed_items: int
     total_items: int
@@ -98,7 +99,8 @@ class RoadmapRow(BaseModel):
     progress: float
     start_date: Optional[str]
     end_date: Optional[str]
-    roadmap_status: Optional[str]
+    epic_status: str
+    epic_status_kind: str
     temporal_status: Optional[str]
     epic_risk: bool
     epic_risk_reason: str

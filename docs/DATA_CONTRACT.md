@@ -47,6 +47,7 @@ Resposta:
       "epics": [
         {
           "epic": "APR-1204", "epic_name": "...", "owner_team": "Squad Aprender",
+          "epic_status": "Desenvolvimento",
           "completed_items": 1, "total_items": 5, "progress": 20.0,
           "is_completed": false, "is_empty": false,
           "start_date": "2026-04-13", "end_date": "2026-06-05",
@@ -91,7 +92,8 @@ Resposta (resumo):
   "roadmap": [
     { "team":"Squad Aprender","epic":"APR-1204","epic_name":"...","progress":20.0,
       "start_date":"2026-04-13","end_date":"2026-06-05",
-      "roadmap_status":"Em andamento","temporal_status":"Em janela",
+      "epic_status":"Desenvolvimento","epic_status_kind":"inprogress",
+      "temporal_status":"Em janela",
       "epic_risk":true,"epic_risk_reason":"...","is_transbordo":false,
       "progress_label":"20.0%","display_name":"Squad Aprender | APR-1204","epic_url":"..." }
   ],
@@ -99,8 +101,11 @@ Resposta (resumo):
 }
 ```
 Notas de paridade:
-- `roadmap_status` mantém a classificação original completa (`Concluído | Atrasado | Em risco | Transbordo | Em andamento`). **A simplificação para 3 estados (Concluído / Em andamento / Pendente) é feita no front**, derivando "atrasado/transbordo" das datas — o backend continua expondo o dado bruto.
-- `delayed` (KPI) usa `roadmap_status == "Atrasado"`, idêntico ao `management_view`.
+- `epic_status` é o nome original do status do épico no Jira.
+- `epic_status_kind` classifica esse valor pelas regras de `workflow_rules.py`: `done | inprogress | todo | cancelled`.
+- `progress` continua sendo calculado pelas histórias filhas e não define o status do épico.
+- `temporal_status`, `epic_risk` e `is_transbordo` são dimensões independentes do workflow.
+- `delayed` conta épicos com prazo passado que não estejam classificados como `done`; ele pode se sobrepor aos KPIs de andamento e não iniciado.
 - Épicos sem datas aparecem em `roadmap` (com `start/end = null`) e são omitidos quando `only_with_dates=true`.
 
 ## POST `/api/refresh`

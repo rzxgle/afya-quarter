@@ -15,7 +15,8 @@ DONE_STATUS = [
     "Pronto para Staging",
     "PRONTO PARA HOMOLOGAÇÃO INTEGRADA",
     "Homologação integrada",
-    "Staging"
+    "Staging",
+    "Measure & Learn"
 ]
 
 IN_PROGRESS_STATUS = [

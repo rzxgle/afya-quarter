@@ -24,7 +24,7 @@ from app.core.dashboard_filters import (
     get_available_teams, filter_by_teams, filter_by_projects,
 )
 from app.core.workflow_rules import (
-    is_in_approval, is_in_progress, is_ignored,
+    is_done, is_in_approval, is_in_progress, is_ignored,
 )
 from app.core.safe_metrics import (
     calculate_epic_progress, calculate_team_progress,
@@ -211,6 +211,7 @@ def _teams_payload(team_progress, epic_progress, epic_map, df):
             epics_out.append({
                 "epic": epic_key,
                 "epic_name": epic_map.get(epic_key, ""),
+                "epic_status": epic.get("epic_status", "") or "",
                 "owner_team": epic.get("epic_owner_team", team_name),
                 "completed_items": done,
                 "total_items": total,
@@ -292,7 +293,7 @@ def build_tracking(product, cycle, project_view=None, teams=None):
 def _roadmap_rows_payload(roadmap_df):
     cols = [
         "team", "epic", "epic_name", "progress", "start_date", "end_date",
-        "roadmap_status", "temporal_status", "epic_risk", "epic_risk_reason",
+        "epic_status", "epic_status_kind", "temporal_status", "epic_risk", "epic_risk_reason",
         "is_transbordo", "progress_label", "display_name", "epic_url",
     ]
     out = []
@@ -304,7 +305,8 @@ def _roadmap_rows_payload(roadmap_df):
             "progress": _f(r.get("progress")),
             "start_date": _iso(r.get("start_date")),
             "end_date": _iso(r.get("end_date")),
-            "roadmap_status": r.get("roadmap_status"),
+            "epic_status": r.get("epic_status"),
+            "epic_status_kind": r.get("epic_status_kind"),
             "temporal_status": r.get("temporal_status"),
             "epic_risk": bool(r.get("epic_risk", False)),
             "epic_risk_reason": r.get("epic_risk_reason", "") or "",
@@ -338,18 +340,17 @@ def build_roadmap(product, cycle, project_view=None, teams=None, only_with_dates
     if only_with_dates:
         roadmap_df = roadmap_df.dropna(subset=["start_date", "end_date"])
 
-    # ---- KPIs idênticos ao management_view.py ----
+    # Workflow vem do status do épico; atraso permanece uma dimensão temporal.
     summary_df = roadmap_df.drop_duplicates(subset=["epic"]).copy()
     total_epics = int(summary_df["epic"].nunique())
-    completed_count = int(summary_df[summary_df["progress"] >= 100]["epic"].nunique())
-    delayed_count = int(summary_df[summary_df["roadmap_status"] == "Atrasado"]["epic"].nunique())
-    not_started_count = int(summary_df[
-        (summary_df["progress"] == 0) & (summary_df["roadmap_status"] != "Atrasado")
+    done_mask = summary_df["epic_status"].apply(is_done)
+    in_progress_mask = summary_df["epic_status"].apply(is_in_progress)
+    completed_count = int(summary_df[done_mask]["epic"].nunique())
+    delayed_count = int(summary_df[
+        (summary_df["temporal_status"] == "Prazo passou") & ~done_mask
     ]["epic"].nunique())
-    in_progress_count = int(summary_df[
-        (summary_df["progress"] > 0) & (summary_df["progress"] < 100)
-        & (summary_df["roadmap_status"] != "Atrasado")
-    ]["epic"].nunique())
+    in_progress_count = int(summary_df[in_progress_mask]["epic"].nunique())
+    not_started_count = int(summary_df[~done_mask & ~in_progress_mask]["epic"].nunique())
     completion_rate = (completed_count / total_epics * 100) if total_epics > 0 else 0.0
 
     quarter_time_progress = float(calculate_quarter_time_progress(start_date, end_date))

@@ -66,8 +66,22 @@ def test_roadmap_only_with_dates():
     assert not any(x["epic"] == "APR-1255" for x in r_dt["roadmap"])
 
 
-def test_roadmap_kpis_somam_total():
+def test_roadmap_kpis_usam_status_do_epico():
     r = pipeline.build_roadmap("Afya Bridge", "Q2")
     k = r["kpis"]
-    assert k["completed"] + k["delayed"] + k["in_progress"] + k["not_started"] == k["total_epics"]
+    assert k["completed"] + k["in_progress"] + k["not_started"] == k["total_epics"]
+
+    # Atraso é uma condição temporal independente das categorias de workflow.
+    delayed = [
+        row for row in r["roadmap"]
+        if row["temporal_status"] == "Prazo passou"
+        and row["epic_status_kind"] != "done"
+    ]
+    assert k["delayed"] == len(delayed)
+
+    # O status do épico prevalece sobre o progresso calculado pelos filhos.
+    epic = next(row for row in r["roadmap"] if row["epic"] == "CONV-410")
+    assert epic["progress"] < 100
+    assert epic["epic_status"] == "Concluído"
+    assert epic["epic_status_kind"] == "done"
     assert len(r["sprints"]) == 5

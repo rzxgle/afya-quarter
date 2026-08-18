@@ -71,7 +71,7 @@ export default function KpiDrawer({
                         ) : row.epic}
                       </td>
                       <td data-label="SUMMARY">{row.epic_name || "-"}</td>
-                      <td data-label="STATUS"><span className="drawer-status">{row.roadmap_status || "-"}</span></td>
+                      <td data-label="STATUS"><span className="drawer-status">{row.epic_status || "-"}</span></td>
                     </tr>
                   ))}
                 </tbody>

@@ -5,9 +5,9 @@ import { pct, fmtShort, fmtFull, toDate, todayISO } from "../lib/format";
 const ROW_H = 38;
 
 type Bucket = "concluido" | "andamento" | "pendente";
-function bucket(progress: number): Bucket {
-  if (progress >= 100) return "concluido";
-  if (progress > 0) return "andamento";
+function bucket(statusKind: RoadmapRow["epic_status_kind"]): Bucket {
+  if (statusKind === "done") return "concluido";
+  if (statusKind === "inprogress") return "andamento";
   return "pendente";
 }
 const BUCKET_LABEL: Record<Bucket, string> = {
@@ -15,14 +15,6 @@ const BUCKET_LABEL: Record<Bucket, string> = {
   andamento: "Em andamento",
   pendente: "Pendente",
 };
-
-function temporal(row: RoadmapRow, today: string): string {
-  if (!row.start_date || !row.end_date) return "Sem datas";
-  if (row.progress >= 100) return "Concluído";
-  if (toDate(today) < toDate(row.start_date)) return "Ainda não iniciou";
-  if (toDate(today) > toDate(row.end_date)) return "Prazo passou";
-  return "Em janela";
-}
 
 interface TipState {
   x: number;
@@ -127,7 +119,7 @@ export default function Gantt({
               if (!r.start_date || !r.end_date) return null;
               const left = xp(r.start_date);
               const width = Math.max(xp(r.end_date) - left, 0);
-              const cls = `g-bar bar-${bucket(r.progress)}${r.epic_risk ? " risk" : ""}`;
+              const cls = `g-bar bar-${bucket(r.epic_status_kind)}${r.epic_risk ? " risk" : ""}`;
               const narrow = width < 7;
               const top = i * ROW_H + 7;
               return (
@@ -155,15 +147,15 @@ export default function Gantt({
         </div>
       </div>
 
-      {tip && <GanttTip tip={tip} today={today} />}
+      {tip && <GanttTip tip={tip} />}
     </div>
   );
 }
 
-function GanttTip({ tip, today }: { tip: TipState; today: string }) {
+function GanttTip({ tip }: { tip: TipState }) {
   const r = tip.row;
-  const st = BUCKET_LABEL[bucket(r.progress)];
-  const ts = temporal(r, today);
+  const st = r.epic_status || BUCKET_LABEL[bucket(r.epic_status_kind)];
+  const ts = r.temporal_status || "Sem datas";
   const late = ts === "Prazo passou";
   let x = tip.x + 14;
   const y = tip.y + 14;

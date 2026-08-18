@@ -15,10 +15,10 @@ from app.core.config import TEAM_FIELD, TRANSBORDO_LABELS
 # ---- Dataset fictício (mesmo do protótipo) ----
 # item: (key, summary, status, team_override|None, flagged)
 def _epic(key, summary, team, project, labels, start, end,
-          items, risk=False, risk_reason=""):
+          items, risk=False, risk_reason="", status="A fazer"):
     return dict(key=key, summary=summary, team=team, project=project,
                 labels=labels, start=start, end=end, items=items,
-                risk=risk, risk_reason=risk_reason)
+                risk=risk, risk_reason=risk_reason, status=status)
 
 
 _L_BRIDGE_Q2 = ["EpicoPI2Legado"]
@@ -36,13 +36,15 @@ MOCK_EPICS = [
            ("APR-1214", "Integração com banco de questões", "Em Homologação", None, False),
            ("APR-1219", "Legado descontinuado", "Cancelado", None, False)],
           risk=True,
-          risk_reason="Dependência do time de Dados atrasou a base de recomendação."),
+          risk_reason="Dependência do time de Dados atrasou a base de recomendação.",
+          status="Desenvolvimento"),
 
     _epic("APR-1231", "Onboarding do aluno de medicina", "Squad Aprender", "APR",
           _L_BRIDGE_Q2, "2026-04-13", "2026-05-22",
           [("APR-1240", "Fluxo de boas-vindas", "Concluído", None, False),
            ("APR-1241", "Tour guiado do produto", "Prod", None, False),
-           ("APR-1242", "Checklist do primeiro acesso", "Concluído", None, False)]),
+           ("APR-1242", "Checklist do primeiro acesso", "Concluído", None, False)],
+          status="Concluído"),
 
     # épico vazio e sem datas (demonstra "sem datas" no roadmap)
     _epic("APR-1255", "Painel de mentoria (novo)", "Squad Aprender", "APR",
@@ -53,14 +55,16 @@ MOCK_EPICS = [
           [("DESC-890", "Indexação de programas", "Staging", None, False),
            ("DESC-891", "Filtros por especialidade", "Desenvolvimento", None, True),
            ("DESC-892", "Ranking de compatibilidade", "A fazer", None, False),
-           ("DESC-893", "Página de detalhe do programa", "Code Review", None, False)]),
+           ("DESC-893", "Página de detalhe do programa", "Code Review", None, False)],
+          status="Desenvolvimento"),
 
     _epic("DESC-905", "Comparador de instituições", "Squad Descobrir", "DESC",
           _L_BRIDGE_Q2, "2026-04-27", "2026-06-30",
           [("DESC-910", "Modelo de dados comparativo", "Concluído", None, False),
            ("DESC-911", "UI de comparação lado a lado", "Em QA", None, False),
            # item de outra squad -> "atividades compartilhadas"
-           ("APR-1290", "Métricas de aprovação (compartilhada)", "Desenvolvimento", "Squad Aprender", False)]),
+           ("APR-1290", "Métricas de aprovação (compartilhada)", "Desenvolvimento", "Squad Aprender", False)],
+          status="Em QA"),
 
     _epic("CONV-410", "Novo fluxo de matrícula", "Squad Conversão", "CONV",
           _L_BRIDGE_Q2, "2026-04-13", "2026-05-30",
@@ -68,14 +72,16 @@ MOCK_EPICS = [
            ("CONV-421", "Pagamento via Pix", "Prod", None, False),
            ("CONV-422", "Recuperação de carrinho", "Em Homologação", None, False),
            ("CONV-423", "Cupom de desconto", "Concluído", None, False),
-           ("CONV-424", "Antifraude", "Em QA", None, False)]),
+           ("CONV-424", "Antifraude", "Em QA", None, False)],
+          status="Concluído"),
 
     # transbordo (label em TRANSBORDO_LABELS e presente na JQL de Bridge Q2)
     _epic("CONV-455", "Reengajamento de leads", "Squad Conversão", "CONV",
           _L_BRIDGE_Q2 + _L_TRANS, "2026-05-04", "2026-06-30",
           [("CONV-460", "Automação de e-mails", "Desenvolvimento", None, False),
            ("CONV-461", "Segmentação por interesse", "A fazer", None, False),
-           ("CONV-462", "Landing de retorno", "A fazer", None, False)]),
+           ("CONV-462", "Landing de retorno", "A fazer", None, False)],
+          status="A fazer"),
 
     _epic("COREX-72", "Migração de autenticação (SSO)", "Squad Core", "COREX",
           _L_BRIDGE_Q2, "2026-04-13", "2026-06-13",
@@ -84,32 +90,37 @@ MOCK_EPICS = [
            ("COREX-82", "Revogação de tokens", "A fazer", None, False),
            ("COREX-83", "Auditoria de acesso", "A fazer", None, False)],
           risk=True,
-          risk_reason="Janela de migração conflita com o congelamento de release."),
+          risk_reason="Janela de migração conflita com o congelamento de release.",
+          status="Desenvolvimento"),
 
     _epic("APP-330", "Notificações push de aulas", "Squad App", "APP",
           _L_BRIDGE_Q2, "2026-04-13", "2026-05-16",
           [("APP-340", "Serviço de push", "Concluído", None, False),
            ("APP-341", "Preferências de notificação", "Prod", None, False),
-           ("APP-342", "Deep link para a aula", "Concluído", None, False)]),
+           ("APP-342", "Deep link para a aula", "Concluído", None, False)],
+          status="Concluído"),
 
     _epic("APP-360", "Modo offline de conteúdo", "Squad App", "APP",
           _L_BRIDGE_Q2, "2026-05-11", "2026-06-30",
           [("APP-370", "Download de vídeos", "Em QA", None, False),
            ("APP-371", "Cache de PDFs", "Desenvolvimento", None, False),
            ("APP-372", "Sincronização de progresso", "A fazer", None, False),
-           ("APP-373", "Gestão de armazenamento", "A fazer", None, False)]),
+           ("APP-373", "Gestão de armazenamento", "A fazer", None, False)],
+          status="Desenvolvimento"),
 
     # ---------------- Afya One · Q2 ----------------
     _epic("APR-2110", "Biblioteca unificada de conteúdos", "Squad One Aprender", "APR",
           _L_ONE_Q2, "2026-04-13", "2026-06-20",
           [("APR-2120", "Catálogo único", "Staging", None, False),
            ("APR-2121", "Player integrado", "Desenvolvimento", None, False),
-           ("APR-2122", "Favoritos e histórico", "A fazer", None, False)]),
+           ("APR-2122", "Favoritos e histórico", "A fazer", None, False)],
+          status="Desenvolvimento"),
 
     _epic("APR-2140", "Certificados digitais", "Squad One Aprender", "APR",
           _L_ONE_Q2, "2026-04-27", "2026-06-06",
           [("APR-2150", "Geração de PDF assinado", "Concluído", None, False),
-           ("APR-2151", "Validação por QR Code", "Em QA", None, False)]),
+           ("APR-2151", "Validação por QR Code", "Em QA", None, False)],
+          status="Em QA"),
 
     _epic("COREX-210", "Data lake de eventos", "Squad One Core", "COREX",
           _L_ONE_Q2, "2026-04-13", "2026-06-30",
@@ -117,7 +128,8 @@ MOCK_EPICS = [
            ("COREX-221", "Modelagem dimensional", "A fazer", None, False),
            ("COREX-222", "Painel de qualidade de dados", "A fazer", None, False)],
           risk=True,
-          risk_reason="Volume de eventos acima do previsto exige revisão de infra."),
+          risk_reason="Volume de eventos acima do previsto exige revisão de infra.",
+          status="Desenvolvimento"),
 ]
 
 
@@ -148,6 +160,7 @@ def fetch_issues(jql):
         is_transbordo = any(l in TRANSBORDO_LABELS for l in e["labels"])
         epic_rows.append({
             "epic": e["key"],
+            "epic_status": e["status"],
             "team": e["team"],
             "project": e["project"],
             "epic_risk": bool(e["risk"]),
@@ -159,7 +172,7 @@ def fetch_issues(jql):
 
     epic_df = pd.DataFrame(
         epic_rows,
-        columns=["epic", "team", "project", "epic_risk",
+        columns=["epic", "epic_status", "team", "project", "epic_risk",
                  "epic_risk_reason", "is_transbordo", "start_date", "end_date"],
     )
 

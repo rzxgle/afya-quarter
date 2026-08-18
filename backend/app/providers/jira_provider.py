@@ -47,6 +47,7 @@ def _fetch_issues_uncached(jql):
         maxResults=False,
         fields=[
             "summary",
+            "status",
             "labels",
             "project",
             TEAM_FIELD,          # campo team
@@ -75,9 +76,12 @@ def _fetch_issues_uncached(jql):
         )
         start_date = getattr(epic.fields, "customfield_10505", None)
         end_date = getattr(epic.fields, "duedate", None)
+        status_obj = getattr(epic.fields, "status", None)
+        epic_status = getattr(status_obj, "name", "") if status_obj else ""
 
         epic_data.append({
             "epic": epic.key,
+            "epic_status": epic_status,
             "team": team,
             "project": project,
             "epic_risk": risk_value == "Sim",
@@ -90,7 +94,7 @@ def _fetch_issues_uncached(jql):
     epic_df = pd.DataFrame(
         epic_data,
         columns=[
-            "epic", "team", "project", "epic_risk",
+            "epic", "epic_status", "team", "project", "epic_risk",
             "epic_risk_reason", "is_transbordo", "start_date", "end_date",
         ],
     )

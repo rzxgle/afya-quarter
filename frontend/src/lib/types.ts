@@ -23,6 +23,7 @@ export interface Item {
 export interface Epic {
   epic: string;
   epic_name: string;
+  epic_status: string;
   owner_team: string;
   completed_items: number;
   total_items: number;
@@ -92,7 +93,8 @@ export interface RoadmapRow {
   progress: number;
   start_date: string | null;
   end_date: string | null;
-  roadmap_status: string | null;
+  epic_status: string;
+  epic_status_kind: ItemKind;
   temporal_status: string | null;
   epic_risk: boolean;
   epic_risk_reason: string;
