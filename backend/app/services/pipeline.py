@@ -114,7 +114,7 @@ def _assemble(product, cycle):
     labels_jql = ", ".join(labels)
     jql = (
         f'\nlabels in ({labels_jql}) AND '
-        f'issuetype in (Epic,"Enabler Epic")\n'
+        f'issuetype in (Epic,"Enabler Epic") and status != CANCELADO\n'
     )
 
     issues, epic_map, epic_df = fetch_issues(jql)

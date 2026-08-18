@@ -39,7 +39,7 @@ def get_label_options():
                 "description": "Ciclo Q2 Afya One"
             },
             "Q3": {
-                "labels": ["PI3AfyaOne", "TransbordoPI2AfyaOne"],
+                "labels": ["PI3AfyaOne", "TransbordoPI2AfyaOne", "NOVOPI3AfyaOne", "DESPRIORIZADOPI3AfyaOne"],
                 "quarter": "Q3",
                 "year": 2026,
                 "display_name": "Quarter 3",
